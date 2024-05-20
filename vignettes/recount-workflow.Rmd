@@ -729,6 +729,15 @@ recount2 provides bigWig coverage files (unscaled) for all samples, as well as a
 
 For illustrative purposes, we will use the data from chromosome 21 for the SRP045638 project. First, we obtain the expressed regions using a relatively high mean cutoff of 5. We then filter the regions to keep only the ones longer than 100 base-pairs to shorten the time needed for running `coverage_matrix()`.
 
+```{r 'download_bigwigs', eval = .Platform$OS.type != 'windows'}
+## Normally, one can use rtracklayer::import() to access remote parts of BigWig
+## files without having to download the complete files. However, as of
+## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
+## issue https://github.com/lawremi/rtracklayer/issues/83
+download_study("SRP045638", type = "mean")
+download_study("SRP045638", type = "samples")
+```
+
 ```{r "identify regions", eval = .Platform$OS.type != "windows"}
 ## Define expressed regions for study SRP045638, only for chromosome 21
 regions <- expressed_regions("SRP045638", "chr21",
