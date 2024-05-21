@@ -1,3 +1,13 @@
+# recountWorkflow
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+* Implement a workaround to https://github.com/lawremi/rtracklayer/issues/83
+which currently is limiting the ability to remotely access BigWig files using
+`rtracklayer::import()`. This affects the functions
+`recount::expressed_regions()`, `recount::coverage_matrix()`, and
+`derfinder::getRegionCoverage()` used in `recountWorkflow`.
+
 # recountWorkflow 1.11.2
 
 SIGNIFICANT USER-VISIBLE CHANGES
