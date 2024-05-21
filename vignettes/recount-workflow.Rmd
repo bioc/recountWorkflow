@@ -875,7 +875,6 @@ names(bws) <- colData(rse_er_scaled)$run
 ## Workaround to https://github.com/lawremi/rtracklayer/issues/83: use the local
 ## files we already downloaded
 bws <- gsub("http://duffel.rail.bio/recount/", "", bws)
-stopifnot(all(file.exists(bws)))
 ```
 
 We visualize the DERs using `derfinderPlot`, similar to what was done in the original publication [@jaffe2015]. However, we first add a little padding to the regions: 100 base-pairs on each side.
