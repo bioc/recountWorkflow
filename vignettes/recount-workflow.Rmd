@@ -729,7 +729,7 @@ recount2 provides bigWig coverage files (unscaled) for all samples, as well as a
 
 For illustrative purposes, we will use the data from chromosome 21 for the SRP045638 project. First, we obtain the expressed regions using a relatively high mean cutoff of 5. We then filter the regions to keep only the ones longer than 100 base-pairs to shorten the time needed for running `coverage_matrix()`.
 
-```{r 'download_bigwigs', eval = .Platform$OS.type != 'windows'}
+```{r 'download_mean_bigwig', eval = .Platform$OS.type != 'windows'}
 ## Normally, one can use rtracklayer::import() to access remote parts of BigWig
 ## files without having to download the complete files. However, as of
 ## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
@@ -754,9 +754,20 @@ table(width(regions) >= 100)
 ## Keep only the ones that are at least 100 bp long
 regions <- regions[width(regions) >= 100]
 length(regions)
+
+## Remove file we no longer need
+unlink("SRP045638/bw", recursive = TRUE)
 ```
 
 Now that we have a set of regions to work with, we proceed to build a _RangedSummarizedExperiment_ object with the coverage counts, add the expanded metadata we built for the gene-level, and scale the counts. Note that `coverage_matrix()` scales the base-pair coverage counts by default, which we turn off in order to use use `scale_counts()`.
+
+```{r 'download_sample_bigwigs', eval = .Platform$OS.type != 'windows'}
+## Normally, one can use rtracklayer::import() to access remote parts of BigWig
+## files without having to download the complete files. However, as of
+## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
+## issue https://github.com/lawremi/rtracklayer/issues/83
+download_study("SRP045638", type = "samples")
+```
 
 ```{r "build_rse_ER", eval = .Platform$OS.type != "windows"}
 ## Compute coverage matrix for study SRP045638, only for chromosome 21
@@ -774,6 +785,9 @@ rse_er_scaled <- scale_counts(rse_er)
 
 ## To highlight that we scaled the counts
 rm(rse_er)
+
+## Remove files we no longer need
+unlink("SRP045638/bw", recursive = TRUE)
 ```
 
 Now that we have a scaled count matrix for the expressed regions, we can proceed with the DE analysis just like we did at the gene and exon feature levels (Figures \@ref(fig:erdeanalysis1), \@ref(fig:erdeanalysis2), \@ref(fig:erdeanalysis3), and \@ref(fig:erdeanalysis4)).
