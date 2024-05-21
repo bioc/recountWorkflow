@@ -735,7 +735,6 @@ For illustrative purposes, we will use the data from chromosome 21 for the SRP04
 ## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
 ## issue https://github.com/lawremi/rtracklayer/issues/83
 download_study("SRP045638", type = "mean")
-download_study("SRP045638", type = "samples")
 ```
 
 ```{r "identify regions", eval = .Platform$OS.type != "windows"}
