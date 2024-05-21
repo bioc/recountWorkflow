@@ -729,7 +729,7 @@ recount2 provides bigWig coverage files (unscaled) for all samples, as well as a
 
 For illustrative purposes, we will use the data from chromosome 21 for the SRP045638 project. First, we obtain the expressed regions using a relatively high mean cutoff of 5. We then filter the regions to keep only the ones longer than 100 base-pairs to shorten the time needed for running `coverage_matrix()`.
 
-```{r 'download_mean_bigwig', eval = .Platform$OS.type != 'windows'}
+```{r 'download_mean_bigwig', eval = FALSE}
 ## Normally, one can use rtracklayer::import() to access remote parts of BigWig
 ## files without having to download the complete files. However, as of
 ## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
@@ -737,14 +737,20 @@ For illustrative purposes, we will use the data from chromosome 21 for the SRP04
 download_study("SRP045638", type = "mean")
 ```
 
-```{r "identify regions", eval = .Platform$OS.type != "windows"}
+```{r "identify regions", eval = FALSE}
 ## Define expressed regions for study SRP045638, only for chromosome 21
 regions <- expressed_regions("SRP045638", "chr21",
     cutoff = 5L,
     maxClusterGap = 3000L,
     outdir = "SRP045638"
 )
+```
 
+```{r "load identified regions", echo = FALSE}
+regions <- readRDS("regions_unfilt_2024-05-21.rds")
+```
+
+```{r "filter regions"}
 ## Explore the resulting expressed regions
 regions
 summary(width(regions))
@@ -753,30 +759,31 @@ table(width(regions) >= 100)
 ## Keep only the ones that are at least 100 bp long
 regions <- regions[width(regions) >= 100]
 length(regions)
-
-## Remove file we no longer need
-unlink("SRP045638/bw/mean_SRP045638.bw")
-stopifnot(!file.exists("SRP045638/bw/mean_SRP045638.bw"))
 ```
+
 
 Now that we have a set of regions to work with, we proceed to build a _RangedSummarizedExperiment_ object with the coverage counts, add the expanded metadata we built for the gene-level, and scale the counts. Note that `coverage_matrix()` scales the base-pair coverage counts by default, which we turn off in order to use use `scale_counts()`.
 
-```{r 'download_sample_bigwigs', eval = .Platform$OS.type != 'windows'}
+```{r 'download_sample_bigwigs', eval = FALSE}
 ## Normally, one can use rtracklayer::import() to access remote parts of BigWig
 ## files without having to download the complete files. However, as of
 ## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
 ## issue https://github.com/lawremi/rtracklayer/issues/83
 download_study("SRP045638", type = "samples")
-```
 
-```{r "build_rse_ER", eval = .Platform$OS.type != "windows"}
 ## Compute coverage matrix for study SRP045638, only for chromosome 21
 ## Takes about 4 minutes
 rse_er <- coverage_matrix("SRP045638", "chr21", regions,
     chunksize = 2000, verboseLoad = FALSE, scale = FALSE,
     outdir = "SRP045638"
 )
+```
 
+```{r " pre_computed_build_rse_ER", echo = FALSE}
+rse_er <- readRDS("rse_er_raw_2024-05-21.rds")
+```
+
+```{r "build_rse_ER"}
 ## Use the expanded metadata we built for the gene model
 colData(rse_er) <- colData(rse_gene_scaled)
 
@@ -789,7 +796,7 @@ rm(rse_er)
 
 Now that we have a scaled count matrix for the expressed regions, we can proceed with the DE analysis just like we did at the gene and exon feature levels (Figures \@ref(fig:erdeanalysis1), \@ref(fig:erdeanalysis2), \@ref(fig:erdeanalysis3), and \@ref(fig:erdeanalysis4)).
 
-```{r "erdeanalysis1", eval = .Platform$OS.type != "windows", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Multi-dimensional scaling plot of the expressed regions level data by age group."}
+```{r "erdeanalysis1", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Multi-dimensional scaling plot of the expressed regions level data by age group."}
 ## Build DGEList object
 dge_er <- DGEList(counts = assays(rse_er_scaled)$counts)
 
@@ -800,11 +807,11 @@ dge_er <- calcNormFactors(dge_er)
 plotMDS(dge_er, labels = substr(colData(rse_er_scaled)$prenatal, 1, 2))
 ```
 
-```{r "erdeanalysis2", eval = .Platform$OS.type != "windows", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Multi-dimensional scaling plot of the expressed regions level data by sex."}
+```{r "erdeanalysis2", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Multi-dimensional scaling plot of the expressed regions level data by sex."}
 plotMDS(dge_er, labels = substr(colData(rse_er_scaled)$sex, 1, 1))
 ```
 
-```{r "erdeanalysis3", eval = .Platform$OS.type != "windows", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "voom mean-variance plot of the expressed regions level data."}
+```{r "erdeanalysis3", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "voom mean-variance plot of the expressed regions level data."}
 ## Run voom
 v_er <- voom(dge_er, design, plot = TRUE)
 
@@ -813,7 +820,7 @@ fit_er <- lmFit(v_er, design)
 fit_er <- eBayes(fit_er)
 ```
 
-```{r "erdeanalysis4", eval = .Platform$OS.type != "windows", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Volcano plot of the expressed regions level data. Testing for prenatal and postnatal DE adjusting for sex and RIN."}
+```{r "erdeanalysis4", out.width=ifelse(on.bioc, "100%", "70%"), fig.align="center", fig.cap = "Volcano plot of the expressed regions level data. Testing for prenatal and postnatal DE adjusting for sex and RIN."}
 ## Visually explore the results
 limma::volcanoplot(fit_er, coef = 4)
 
@@ -827,7 +834,7 @@ table(top_er$adj.P.Val < 0.001)
 
 Having identified the differentially expressed regions (DERs), we can sort all regions by their adjusted p-value. 
 
-```{r "sort_qvalue", eval = .Platform$OS.type != "windows"}
+```{r "sort_qvalue"}
 ## Sort regions by q-value
 regions_by_padj <- regions[order(top_er$adj.P.Val, decreasing = FALSE)]
 
@@ -845,7 +852,7 @@ Because the unscaled bigWig files are available in recount2, several visualizati
 
 First, we need to get the list of URLs for the bigWig files. We can either manually construct them or search them inside the `recount_url` table.
 
-```{r "find_bws", eval = .Platform$OS.type != "windows"}
+```{r "find_bws"}
 ## Construct the list of bigWig URLs
 ## They have the following form:
 ## http://duffel.rail.bio/recount/
@@ -875,7 +882,7 @@ stopifnot(all(file.exists(bws)))
 
 We visualize the DERs using `derfinderPlot`, similar to what was done in the original publication [@jaffe2015]. However, we first add a little padding to the regions: 100 base-pairs on each side.
 
-```{r "add_padding", eval = .Platform$OS.type != "windows"}
+```{r "add_padding"}
 ## Add 100 bp padding on each side
 regions_resized <- resize(regions_by_padj[1:10],
     width(regions_by_padj[1:10]) + 200,
@@ -885,7 +892,7 @@ regions_resized <- resize(regions_by_padj[1:10],
 
 Next, we obtain the base-pair coverage data for each DER and scale the data to a library size of 40 million 100 base-pair reads, using the coverage AUC information we have in the metadata.
 
-```{r "regionCov", eval = .Platform$OS.type != "windows"}
+```{r "regionCov", eval = FALSE}
 ## Get the bp coverage data for the plots
 library("derfinder")
 regionCov <- getRegionCoverage(
@@ -896,9 +903,15 @@ regionCov <- getRegionCoverage(
 )
 ```
 
+```{r "regionCov_precomputed", echo = FALSE}
+library("derfinder")
+regionCov <- readRDS("regionCov_2024-05-21.rds")
+```
+
+
 The function `plotRegionCoverage()` requires several pieces of annotation information for the plots that use a TxDb object. For recount2 we used Gencode v25 hg38's annotation, which means that we need to process it manually instead of using a pre-computed TxDb package. This is where the `GenomicState` [@GenomicState] package comes into play as it has done the heavy lifting for us already.
 
-```{r "gencode_txdb", eval = .Platform$OS.type != "windows"}
+```{r "gencode_txdb"}
 ## Import the Gencode v25 hg38 gene annotation
 ## using GenomicState
 library("GenomicState")
@@ -915,7 +928,7 @@ gencode_v25_hg38_txdb
 
 Now that we have a TxDb object for Gencode v25 on hg38 coordinates, we can use `bumphunter`'s [@bumphunter] annotation functions for annotating the original 10 regions we were working with as well as the annotated genes that we can download using `GenomicState`.
 
-```{r "bump_ann", eval = .Platform$OS.type != "windows"}
+```{r "bump_ann"}
 ## Download annotated transcripts for gencode v25
 ann_gencode_v25_hg38 <- GenomicStateHub(
     version = "25", genome = "hg38",
@@ -930,7 +943,7 @@ nearest_ann <- matchGenes(regions_by_padj[1:10], ann_gencode_v25_hg38)
 
 The final piece we need to run `plotRegionCoverage()` is information about which base-pairs are exonic, intronic, etc. This is done via the `annotateRegions()` function in `derfinder`, which itself requires prior processing of the TxDb information by `makeGenomicState()` that we can download with `GenomicState`.
 
-```{r "make_gs", eval = .Platform$OS.type != "windows"}
+```{r "make_gs"}
 ## Download the genomic state object for Gencode v25
 gs_gencode_v25_hg38 <- GenomicStateHub(
     version = "25", genome = "hg38",
@@ -946,7 +959,7 @@ regions_ann <- annotateRegions(
 
 We can finally use `plotRegionCoverage()` to visualize the top 10 regions coloring by whether they are prenatal or postnatal samples. Known exons are shown in dark blue, introns in light blue.
 
-```{r "regionplots", eval = .Platform$OS.type != "windows", out.width=ifelse(on.bioc, "100%", "75%"), fig.align="center", fig.cap = 'Base-pair resolution plot of differentially expressed region 2.'}
+```{r "regionplots", out.width=ifelse(on.bioc, "100%", "75%"), fig.align="center", fig.cap = 'Base-pair resolution plot of differentially expressed region 2.'}
 library("derfinderPlot")
 pdf("region_plots.pdf")
 plotRegionCoverage(
@@ -1002,7 +1015,6 @@ session_info()
 ```{r clean_up, echo = FALSE}
 ## Delete big files
 unlink(dir("SRP045638", "rse_", full.names = TRUE))
-unlink("SRP045638/bw", recursive = TRUE)
 ```
 
 
