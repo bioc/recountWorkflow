@@ -266,7 +266,7 @@ if (!file.exists(file.path("SRP045638", "rse_gene.Rdata"))) {
 file.exists(file.path("SRP045638", "rse_gene.Rdata"))
 
 ## Load the data
-load(file.path("SRP045638", "rse_gene.Rdata"))
+load(file.path("SRP045638", "rse_gene.Rdata"), verbose = TRUE)
 ```
 
 The coverage count matrices are provided as _RangedSummarizedExperiment_ objects (rse) [@summarizedexperiment]. These objects store information at the feature level, the samples and the actual count matrix as shown in Figure 1 of Love et al., 2016 [@Love2016]. Figure \@ref(fig:Figure2) shows the actual rse objects provided by recount2 and how to access the different portions of the data. Using a unique sample ID such as the SRA Run ID it is possible to expand the sample metadata. This can be done using the predicted phenotype provided by `add_predictions()` [@Ellis2017], pulling information from GEO via `find_geo()` and `geo_characteristics()`, or with custom code.
@@ -858,10 +858,6 @@ bws <- paste0(
     colData(rse_er_scaled)$bigwig_file
 )
 
-## Workaround to https://github.com/lawremi/rtracklayer/issues/83: use the local
-## files we already downloaded
-bws <- gsub("http://duffel.rail.bio/recount/", "", bws)
-
 ## Note that they are also present in the recount_url data.frame
 bws <- recount_url$url[match(
     colData(rse_er_scaled)$bigwig_file,
@@ -870,6 +866,11 @@ bws <- recount_url$url[match(
 
 ## Use the sample run IDs as the sample names
 names(bws) <- colData(rse_er_scaled)$run
+
+## Workaround to https://github.com/lawremi/rtracklayer/issues/83: use the local
+## files we already downloaded
+bws <- gsub("http://duffel.rail.bio/recount/", "", bws)
+stopifnot(all(file.exists(bws)))
 ```
 
 We visualize the DERs using `derfinderPlot`, similar to what was done in the original publication [@jaffe2015]. However, we first add a little padding to the regions: 100 base-pairs on each side.
