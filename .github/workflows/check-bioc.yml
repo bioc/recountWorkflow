@@ -174,11 +174,11 @@ jobs:
           install.packages(c("rcmdcheck", "BiocCheck"), repos = BiocManager::repositories())
 
           ## Install all the regionReport dependencies
-          remotes::install_github("leekgroup/derfinderPlot") ## regionReport 1.29.1 needs derfinderPlot 1.29.1
-          remotes::install_github("leekgroup/regionReport", dependencies = TRUE)
+          BiocManager::install("leekgroup/derfinderPlot") ## regionReport 1.29.1 needs derfinderPlot 1.29.1
+          BiocManager::install("leekgroup/regionReport", dependencies = TRUE)
 
           ## Install devel version of recount for now
-          remotes::install_github("lcolladotor/recount")
+          BiocManager::install("leekgroup/recount")
 
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
