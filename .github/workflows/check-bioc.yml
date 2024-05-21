@@ -173,6 +173,10 @@ jobs:
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           install.packages(c("rcmdcheck", "BiocCheck"), repos = BiocManager::repositories())
 
+          ## Install all the regionReport dependencies
+          remotes::install_github("leekgroup/derfinderPlot") ## regionReport 1.29.1 needs derfinderPlot 1.29.1
+          remotes::install_github("leekgroup/regionReport", dependencies = TRUE)
+
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)
