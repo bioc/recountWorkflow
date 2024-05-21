@@ -785,9 +785,6 @@ rse_er_scaled <- scale_counts(rse_er)
 
 ## To highlight that we scaled the counts
 rm(rse_er)
-
-## Remove files we no longer need
-unlink("SRP045638/bw", recursive = TRUE)
 ```
 
 Now that we have a scaled count matrix for the expressed regions, we can proceed with the DE analysis just like we did at the gene and exon feature levels (Figures \@ref(fig:erdeanalysis1), \@ref(fig:erdeanalysis2), \@ref(fig:erdeanalysis3), and \@ref(fig:erdeanalysis4)).
@@ -860,6 +857,10 @@ bws <- paste0(
     "http://duffel.rail.bio/recount/SRP045638/bw/",
     colData(rse_er_scaled)$bigwig_file
 )
+
+## Workaround to https://github.com/lawremi/rtracklayer/issues/83: use the local
+## files we already downloaded
+bws <- gsub("http://duffel.rail.bio/recount/", "", bws)
 
 ## Note that they are also present in the recount_url data.frame
 bws <- recount_url$url[match(
@@ -1000,6 +1001,7 @@ session_info()
 ```{r clean_up, echo = FALSE}
 ## Delete big files
 unlink(dir("SRP045638", "rse_", full.names = TRUE))
+unlink("SRP045638/bw", recursive = TRUE)
 ```
 
 
