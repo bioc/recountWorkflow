@@ -755,7 +755,7 @@ regions <- regions[width(regions) >= 100]
 length(regions)
 
 ## Remove file we no longer need
-unlink("SRP045638/bw", recursive = TRUE)
+unlink("SRP045638/bw/mean_SRP045638.bw")
 stopifnot(!file.exists("SRP045638/bw/mean_SRP045638.bw"))
 ```
 
