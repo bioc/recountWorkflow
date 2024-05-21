@@ -742,7 +742,8 @@ download_study("SRP045638", type = "samples")
 ## Define expressed regions for study SRP045638, only for chromosome 21
 regions <- expressed_regions("SRP045638", "chr21",
     cutoff = 5L,
-    maxClusterGap = 3000L
+    maxClusterGap = 3000L,
+    outdir = "SRP045638"
 )
 
 ## Explore the resulting expressed regions
@@ -761,7 +762,8 @@ Now that we have a set of regions to work with, we proceed to build a _RangedSum
 ## Compute coverage matrix for study SRP045638, only for chromosome 21
 ## Takes about 4 minutes
 rse_er <- coverage_matrix("SRP045638", "chr21", regions,
-    chunksize = 2000, verboseLoad = FALSE, scale = FALSE
+    chunksize = 2000, verboseLoad = FALSE, scale = FALSE,
+    outdir = "SRP045638"
 )
 
 ## Use the expanded metadata we built for the gene model
