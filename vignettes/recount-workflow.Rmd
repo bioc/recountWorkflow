@@ -735,9 +735,7 @@ For illustrative purposes, we will use the data from chromosome 21 for the SRP04
 ## 2024-05-20 this doesn't seem to be working well. So this is a workaround to
 ## issue https://github.com/lawremi/rtracklayer/issues/83
 download_study("SRP045638", type = "mean")
-```
 
-```{r "identify regions", eval = FALSE}
 ## Define expressed regions for study SRP045638, only for chromosome 21
 regions <- expressed_regions("SRP045638", "chr21",
     cutoff = 5L,
