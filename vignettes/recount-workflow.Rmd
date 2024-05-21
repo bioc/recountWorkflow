@@ -756,6 +756,7 @@ length(regions)
 
 ## Remove file we no longer need
 unlink("SRP045638/bw", recursive = TRUE)
+stopifnot(!file.exists("SRP045638/bw/mean_SRP045638.bw"))
 ```
 
 Now that we have a set of regions to work with, we proceed to build a _RangedSummarizedExperiment_ object with the coverage counts, add the expanded metadata we built for the gene-level, and scale the counts. Note that `coverage_matrix()` scales the base-pair coverage counts by default, which we turn off in order to use use `scale_counts()`.
