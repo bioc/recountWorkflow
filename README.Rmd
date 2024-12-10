@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 [![Bioc last commit](https://bioconductor.org/shields/lastcommit/devel/workflows/recountWorkflow.svg)](http://bioconductor.org/checkResults/devel/workflows-LATEST/recountWorkflow/)
 [![Bioc dependencies](https://bioconductor.org/shields/dependencies/release/recountWorkflow.svg)](https://bioconductor.org/packages/release/workflows/html/recountWorkflow.html#since)
 [![Codecov test coverage](https://codecov.io/gh/LieberInstitute/recountWorkflow/branch/devel/graph/badge.svg)](https://codecov.io/gh/LieberInstitute/recountWorkflow?branch=devel)
-[![R build status](https://github.com/LieberInstitute/recountWorkflow/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/LieberInstitute/recountWorkflow/actions)
+[![R build status](https://github.com/LieberInstitute/recountWorkflow/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/LieberInstitute/recountWorkflow/actions/workflows/check-bioc.yml)
 [![GitHub issues](https://img.shields.io/github/issues/LieberInstitute/recountWorkflow)](https://github.com/LieberInstitute/recountWorkflow/issues)
 [![GitHub pulls](https://img.shields.io/github/issues-pr/LieberInstitute/recountWorkflow)](https://github.com/LieberInstitute/recountWorkflow/pulls)
 <!-- badges: end -->

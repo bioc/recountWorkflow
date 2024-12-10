@@ -22,7 +22,7 @@ dependencies](https://bioconductor.org/shields/dependencies/release/recountWorkf
 [![Codecov test
 coverage](https://codecov.io/gh/LieberInstitute/recountWorkflow/branch/devel/graph/badge.svg)](https://codecov.io/gh/LieberInstitute/recountWorkflow?branch=devel)
 [![R build
-status](https://github.com/LieberInstitute/recountWorkflow/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/LieberInstitute/recountWorkflow/actions)
+status](https://github.com/LieberInstitute/recountWorkflow/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/LieberInstitute/recountWorkflow/actions/workflows/check-bioc.yml)
 [![GitHub
 issues](https://img.shields.io/github/issues/LieberInstitute/recountWorkflow)](https://github.com/LieberInstitute/recountWorkflow/issues)
 [![GitHub
